@@ -13,19 +13,23 @@ import java.util.List;
 
 public class RestaurantPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<Business> mRestaurants;
+    private String mSource;
+
 
 
     //constructor where we set the required FragmentManager and array list of restaurants we will be swiping through.
-    public RestaurantPagerAdapter(@NonNull FragmentManager fm,int behavior, ArrayList<Business> restaurants) {
+    public RestaurantPagerAdapter(@NonNull FragmentManager fm,int behavior, ArrayList<Business> restaurants,String source) {
         super(fm, behavior);
         mRestaurants = restaurants;
+        mSource = source;
+
     }
 
     @Override
     // returns an instance of the RestaurantDetailFragment for the restaurant in the position provided as an argument.
     public Fragment getItem(int position) {
 //        return RestaurantDetailFragment.newInstance(mRestaurants.get(position));
-        return RestaurantDetailFragment.newInstance(mRestaurants, position);
+        return RestaurantDetailFragment.newInstance(mRestaurants, position, mSource);
     }
 
     @Override

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,6 +27,8 @@ import com.moringaschool.myrestaurants.network.YelpApi;
 import com.moringaschool.myrestaurants.network.YelpClient;
 import com.moringaschool.myrestaurants.util.OnRestaurantSelectedListener;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,7 @@ import retrofit2.Response;
 public class RestaurantListActivity extends AppCompatActivity implements OnRestaurantSelectedListener {
     private Integer mPosition;
     ArrayList<Business> mRestaurants;
+    String mSource;
 //    private SharedPreferences mSharedPreferences;
 //    private SharedPreferences.Editor mEditor;
 //    private String mRecentAddress;
@@ -60,12 +64,46 @@ public class RestaurantListActivity extends AppCompatActivity implements OnResta
 //        if(mRecentAddress != null){
 //            fetchRestaurants(mRecentAddress);
 //        }
+        if (savedInstanceState != null) {
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                mPosition = savedInstanceState.getInt(Constants.EXTRA_KEY_POSITION);
+                mRestaurants = Parcels.unwrap(savedInstanceState.getParcelable(Constants.EXTRA_KEY_RESTAURANTS));
+                mSource = savedInstanceState.getString(Constants.KEY_SOURCE);
+
+                if (mPosition != null && mRestaurants != null) {
+                    Intent intent = new Intent(this, RestaurantDetailActivity.class);
+                    intent.putExtra(Constants.EXTRA_KEY_POSITION, mPosition);
+                    intent.putExtra(Constants.EXTRA_KEY_RESTAURANTS, Parcels.wrap(mRestaurants));
+                    startActivity(intent);
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mPosition != null && mRestaurants != null) {
+            outState.putInt(Constants.EXTRA_KEY_POSITION, mPosition);
+            outState.putParcelable(Constants.EXTRA_KEY_RESTAURANTS, Parcels.wrap(mRestaurants));
+            outState.putString(Constants.KEY_SOURCE, mSource);
+
+        }
+
     }
 
     @Override
-    public void onRestaurantSelected(Integer position, ArrayList<Business> restaurants) {
+    public void onRestaurantSelected(Integer position, ArrayList<Business> restaurants,String source) {
         mPosition = position;
         mRestaurants = restaurants;
+        mSource = source;
 
     }
 
